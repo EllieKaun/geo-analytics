@@ -33,7 +33,7 @@ export const {
 const abortControllers: Record<string, AbortController> = {};
 
 export const fetchLayerThunk = async (
-  dispatch: typeof useMapStoreDispatch extends () => infer D ? D : any,
+  dispatch: any,
   layerId: string,
   time: number
 ) => {

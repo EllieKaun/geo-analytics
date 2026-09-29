@@ -1,13 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense, lazy } from "react";
 import {
   MapStoreContextProvider,
   useMapStoreSelector,
   useMapStoreDispatch,
   fetchLayerThunk,
 } from "./store/mapStore";
-import { MapWidget } from "./components/MapWidget";
-import { TimelinePanel } from "./components/TimelinePanel";
-import { AnalyticsPanel } from "./components/AnalyticsPanel";
+
+const MapWidget = lazy(() => import("./components/MapWidget").then(m => ({ default: m.MapWidget })));
+const TimelinePanel = lazy(() => import("./components/TimelinePanel").then(m => ({ default: m.TimelinePanel })));
+const AnalyticsPanel = lazy(() => import("./components/AnalyticsPanel").then(m => ({ default: m.AnalyticsPanel })));
 import "./index.css";
 
 const LayerControls: React.FC = () => {
@@ -23,7 +24,7 @@ const LayerControls: React.FC = () => {
 
   const toggleLayer = (layerId: string) => {
     const isActive = activeLayers.includes(layerId);
-    let newLayers = [];
+    let newLayers: string[] = [];
 
     if (isActive) {
       newLayers = activeLayers.filter((id) => id !== layerId);
@@ -82,9 +83,11 @@ const MainDashboard: React.FC = () => {
         </aside>
 
         <main className="main-panel">
-          <MapWidget />
-          <TimelinePanel />
-          <AnalyticsPanel />
+          <Suspense fallback={<div>Loading...</div>}>
+            <MapWidget />
+            <TimelinePanel />
+            <AnalyticsPanel />
+          </Suspense>
         </main>
       </div>
     </div>
